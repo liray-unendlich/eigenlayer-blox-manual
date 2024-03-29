@@ -21,6 +21,10 @@ Eigenlayerは、ステーキング済みのETHを更にロック（リステー�
     - [BloxStakingでの初期設定](#bloxstakingでの初期設定)
     - [WagyuKeyGeneratorでのバリデータのアカウント設定](#wagyukeygeneratorでのバリデータのアカウント設定)
     - [BloxStakingへのバリデータの追加・デポジット](#bloxstakingへのバリデータの追加デポジット)
+  - [BloxStakingの移行](#bloxstakingの移行)
+    - [バリデータサービスの選定](#バリデータサービスの選定)
+    - [バリデータの移行](#バリデータの移行)
+  - [バリデータの停止・終了](#バリデータの停止終了)
   - [バリデータの状況確認](#バリデータの状況確認)
 
 ## BloxStakingの紹介
@@ -283,6 +287,94 @@ Ethereumのバリデータを作成するには、バリデータ用の秘密鍵
 
 
    <img src="pic/blox-20.png" alt="blox-20" width="50%"/>
+
+## BloxStakingの移行
+BloxStakingのサービスが終了するため、サーバーの移動が必要となっています。ここでは、引越しの作業について紹介します。
+
+### バリデータサービスの選定
+BloxStakingから移動する前に、どのサービスにするか選択しましょう。BloxStakingでは、keystore.jsonをアップロードして、それを利用する形式だったので、同じような形式に対応しているバリデータサービスを検索してみました（他にもあるかもしれませんので、これ以外はぜひ検索してみてください）。検索ワードは、"Self custody ethereum validator service" です。おそらくEthereumの公式サイト：https://ethereum.org/en/staking/saas/ にも記載があります（Sensei Nodeは記載が間違っている気がしますが）
+- stake.fish: https://stake.fish/dashboard
+- ethpool: https://ethpool.org
+- allnodes: https://www.allnodes.com/eth/host
+
+### バリデータの移行
+このガイドでは、allnodesに移行する場合を考えてみます。**バリデータの移行では、二重署名（同時に同じkeystoreに対応するバリデータを起動すること）を避けるよう注意してください。バリデータを一時的にオフラインにしますが、報酬額が大きく変動するわけではないのでご安心ください。**
+*バリデータを停止だけさせたい場合は、次のセクションをご確認ください。*
+1. AWSにログインしましょう。（[リンク](https://signin.aws.amazon.com/signin?redirect_uri=https%3A%2F%2Feu-central-1.console.aws.amazon.com%2Fec2%2Fhome%3FhashArgs%3D%2523Home%253A%26isauthcode%3Dtrue%26region%3Deu-central-1%26state%3DhashArgsFromTB_eu-central-1_e308818740745dc3&client_id=arn%3Aaws%3Asignin%3A%3A%3Aconsole%2Fec2-tb&forceMobileApp=0&code_challenge=IEeCj8nWkfKlC4-VvxoI_smPPg1-6LjZIBEa64Tofp0&code_challenge_method=SHA-256)）
+2. EC2をクリックしましょう。
+
+
+   <img src="pic/stop-validator-01.png" alt="stop-validator-01" width="50%"/>
+3. インスタンス（実行中）をクリックしましょう。画像のように、ボタンの右側に１と書いてあることも確認しましょう。もし1と書かれていない場合、右上のリージョン選択ボタンをクリックし、米国西部（北カリフォルニア） us-west-1を選択して下さい。bloxstakingのサーバーは、そこに設置されることが多いです。
+
+
+   <img src="pic/stop-validator-02.png" alt="stop-validator-02" width="50%"/>
+4. blox-stakingという名前のサーバーが表示されます。このサーバーが、バリデータの鍵データを保有しています。
+5. 右上の「インスタンスの状態」ボタンをクリックし、「インスタンスを終了」を選択しましょう。これで、バリデータが停止します。
+6. BloxStakingのバリデータを停止できたので、別のバリデータサービスのサイトを開きましょう。ここでは、Allnodesのサイトを開きましょう。
+7. アカウントを作成しましょう。必要事項を入力ください。
+8. ログインできたら、「ステーク」ボタンをクリックしましょう。
+
+
+    <img src="pic/stop-validator-03.png" alt="stop-validator-03" width="50%"/>
+10. 次に、Ethereumの右にある「→」ボタンをクリックしましょう。
+11. 「ノードをホストする」をクリックしましょう。
+12. 「Host Validator Node」をクリックし、直下のネットワーク選択ボタンがMainnetになっていることを確認しましょう。
+13. 次に、ウォレットの接続を求められますが、「手動」ボタンをクリックし、入力欄に、Mainnetでバリデータを起動させる際、32ETHをデポジットするときに使ったアドレスを入力し、「見つける」をクリックしましょう。
+
+
+    <img src="pic/stop-validator-04.png" alt="stop-validator-04" width="50%"/>
+14. アドレスが合っていれば、「ETHをスマートコントラクトに正しくデポジットし、必要なJSONファイルを生成しました。これらのファイルは安全に保管ください。これで、ノードをホストする準備が整いました。」と表示されますので、「次のステップ」をクリックしましょう。
+
+
+    <img src="pic/stop-validator-05.png" alt="stop-validator-05" width="50%"/>
+15. この画面で、幾つのバリデータをAllnodesで実行するか選ぶ必要があります。BloxStakingから移したい数を選んでください（このマニュアルでは、1を選択します）。
+
+
+    <img src="pic/stop-validator-06.png" alt="stop-validator-06" width="50%"/>
+16. 選び終わったら、「続行する」ボタンをクリックしましょう。
+17. 次に、バリデータのサーバーを選択します。２種類ありますが、アドバンスの方がおすすめです（MEV Boostがあるためですが、ベーシックにもある気がします）。選択して、「次のステップ」ボタンをクリックしましょう。
+
+
+    <img src="pic/stop-validator-07.png" alt="stop-validator-07" width="50%"/>
+18. 重大な警告にチェックを入れ、「次へ」をクリックしましょう。
+
+
+    <img src="pic/stop-validator-08.png" alt="stop-validator-08" width="50%"/>
+20. keystoreのアップロード画面に変わるので、BloxStakingから移したいkeystore.jsonを（複数）選択しましょう。なお、下側にパスワードを入力する欄があります。パスワード欄は一つしか出ないため、もしkeystoreごとに異なるパスワードの場合、その度だけ同じ手続きを行ってください。
+21. 入力を終わらせたら、ボタンをクリックしましょう。
+
+
+    <img src="pic/stop-validator-09.png" alt="stop-validator-09" width="50%"/>
+23. 少し待つと、自動的にバリデータの一覧が表示されます（画像はHoleskyの例です）。移行お疲れ様でした！
+
+
+    <img src="pic/stop-validator-10.png" alt="stop-validator-10" width="50%"/>
+
+## バリデータの停止・終了
+このタイミングで、移行せずに終了させたい人もいるのではないでしょうか。引き出しの手続きを説明します。
+まず、必要なツールで、ethdoというものがありますので、ダウンロードしてください（接続すると、ダウンロード可能なクライアントの一覧が表示されるので、利用するOSに合ったクライアントを選びましょう）：https://github.com/wealdtech/ethdo/releases 
+1. ethdoを解凍する（.zip等になっているため）
+2. QuickNodeでEthereumのエンドポイントを生成する（バリデータの情報を取得するため）
+   1. QuickNodeにアクセスする：https://www.quicknode.com
+   2. QuickNodeに登録する
+   3. QuickNodeにログインし、Ethereumのエンドポイントを生成する（左のツールバーより、Create > Create Endpoint > Ethereumと選んでください。）
+   4. メインネットを選び、オプションはつけなくてOK
+   5. 生成したら、HTTP Providerのリンクをコピーする
+3. コマンドプロンプトで次のコマンドを入力する。これにより、Beacon Chainのバリデータ情報を取得する(ethdoのあるフォルダに、offline-preparation.json というファイルが作られる)
+   ``` ./ethdo validator exit --prepare-offline --timeout 2m --allow-insecure-connections --connection $QuikNodeのEthereumエンドポイント（例：https://xxx-xxx-xxx.ethereum.quiknode.pro/xxxx） ```
+4. バリデータを作成したときに生成した、シードフレーズをコピーする
+5. beaconcha.in で自分のバリデータのインデックス(https://beaconcha.in/validator/128757 では、128757)をコピーする
+6. コマンドプロンプトで次のコマンドを実行する
+   ```./ethdo validator exit --mnemonic="4でコピーしたシードフレーズ" --validator=5でコピーした番号```
+7. 実行後、うまくいけばethdoと同じフォルダに、exit-operation.json というファイルが生成されています。
+   画像を添付
+8. [beaconcha.in のツール](https://beaconcha.in/tools/broadcast)にて、exit-operation.jsonの中身を貼り付けましょう。
+9.  あとは引き出しが完了するまで、そのまま待ちましょう！**引き出しが完了するまで（Eigenpodに32ethが移るまで）は、次の作業には移らないでください。**
+10. [バリデータの移行](#バリデータの移行 )の1-6を実施してください。
+11. Eigenpodから32ETHを引き出すには、[Eigenlayerのdappから、Eigenpodを開いてください](https://app.eigenlayer.xyz/token/ETH)。
+12. Eigenpodの残高に32ETHがあることが確認できれば、Unstakeをクリックし、メタマスク等からトランザクションを送信しましょう。
+13. また7日後に戻ってくると、Available Withdrawに32ETHが追加されるので、Withdrawボタンをクリックすれば、引き出しは完了です。
 
 ## バリデータの状況確認
 メインネットでは、バリデータへデポジットしても稼働開始まで45日程度の待ち時間が発生します。忘れてしまうと思うので、状況を確認する手段を記載します。
