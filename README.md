@@ -21,6 +21,7 @@ Eigenlayerは、ステーキング済みのETHを更にロック（リステー�
     - [BloxStakingでの初期設定](#bloxstakingでの初期設定)
     - [WagyuKeyGeneratorでのバリデータのアカウント設定](#wagyukeygeneratorでのバリデータのアカウント設定)
     - [BloxStakingへのバリデータの追加・デポジット](#bloxstakingへのバリデータの追加デポジット)
+  - [bloxstakingでの手数料振込先アドレス設定](#bloxstakingでの手数料振込先アドレス設定)
   - [BloxStakingの移行](#bloxstakingの移行)
     - [バリデータサービスの選定](#バリデータサービスの選定)
     - [バリデータの移行](#バリデータの移行)
@@ -288,6 +289,20 @@ Ethereumのバリデータを作成するには、バリデータ用の秘密鍵
 
    <img src="pic/blox-20.png" alt="blox-20" width="50%"/>
 
+## bloxstakingでの手数料振込先アドレス設定
+Eigenlayerのアップデートにより、手数料振り込み先のアドレスを自身のアドレス(EigenPodではなく、自分の管理するアドレス)に変更する必要があります。以下にその手順を示します。
+1. BloxStakingを起動し、ログインしましょう。
+2. 以下のウィンドウ（メインネットではなくテストネットなため、残高の表示等は異なりますが気にしないでください）が開いたら、赤四角で囲っている、*Fee Recipient Address*の右にある鉛筆マークをクリックしてください。  
+<img src="pic/change-fee-recipient.png" alt="change-fee-recipient" width="50%"/>
+
+1. BloxStakingのパスワードを入力しましょう。
+2. 手数料の振込先アドレス変更ウィンドウが表示されます。  
+<img src="pic/change-fee-recipient-02.png" alt="change-fee-recipient" width="50%"/>
+
+1. *Fee Recipient Address* の欄に、自分のウォレット(EigenPodのアドレスではない)を入力し、*I confirm that I have access to the addresses above* にチェックを入れ、*Next*ボタンをクリックしましょう。
+** 複数バリデータがある場合には、全てにアドレスをそれぞれ入力しましょう**
+1. 2のウィンドウで、アドレスが変わっていることを確認しましょう。
+
 ## BloxStakingの移行
 BloxStakingのサービスが終了するため、サーバーの移動が必要となっています。ここでは、引越しの作業について紹介します。
 
@@ -353,7 +368,7 @@ BloxStakingから移動する前に、どのサービスにするか選択しま
 
 ## バリデータの停止・終了
 このタイミングで、移行せずに終了させたい人もいるのではないでしょうか。引き出しの手続きを説明します。
-まず、必要なツールで、ethdoというものがありますので、ダウンロードしてください（接続すると、ダウンロード可能なクライアントの一覧が表示されるので、利用するOSに合ったクライアントを選びましょう）：https://github.com/wealdtech/ethdo/releases 
+まず、必要なツールで、ethdoというものがありますので、ダウンロードしてください（接続すると、ダウンロード可能なクライアントの一覧が表示されるので、利用するOSに合ったクライアントを選びましょう）：https://github.com/wealdtech/ethdo/releases
 1. ethdoを解凍する（.zip等になっているため）
 2. QuickNodeでEthereumのエンドポイントを生成する（バリデータの情報を取得するため）
    1. QuickNodeにアクセスする：https://www.quicknode.com
